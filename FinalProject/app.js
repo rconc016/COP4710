@@ -25,15 +25,19 @@ app.get('/display_table', function (req, res)
 
 	db_conn.query("SELECT * FROM " + table, function (err, result, fields)
 	{
-		if (err) throw err;
+		if (err) 
+			res.render('error', { table: table, rows: result, columns: columns })
 
-		columns = []
+		else
+		{
+			columns = []
 
-		fields.forEach(function(item) {
-			columns.push(item.name)
-		})		
+			fields.forEach(function(item) {
+				columns.push(item.name)
+			})		
 
-		res.render('display_table', { table: table, rows: result, columns: columns })
+			res.render('display_table', { title: table, table: table, rows: result, columns: columns })
+		}
 	})
 })
 
