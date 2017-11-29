@@ -22,6 +22,7 @@ app.get('/', function (req, res)
 app.get('/display_table', function (req, res) 
 {
 	table = req.query.table
+	mode = req.query.mode
 
 	db_conn.query("SELECT * FROM " + table, function (err, result, fields)
 	{
@@ -36,7 +37,11 @@ app.get('/display_table', function (req, res)
 				columns.push(item.name)
 			})		
 
-			res.render('display_table', { title: table, table: table, rows: result, columns: columns })
+			if (!mode || mode == 0)
+				res.render('display_table', { title: table, table: table, rows: result, columns: columns })
+
+			else if (mode == 1)
+				res.render('display_table_text', { title: table, table: table, rows: result, columns: columns })
 		}
 	})
 })
