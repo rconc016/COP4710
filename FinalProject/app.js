@@ -8,7 +8,8 @@ var db_conn = mysql.createConnection(
 {
 	host: 'localhost',
 	user: 'root',
-	password: 'root'
+	password: 'root',
+	database: 'henrybooks'
 })
 
 app.get('/', function (req, res) 
@@ -16,6 +17,24 @@ app.get('/', function (req, res)
 	tables = ['author', 'book', 'copy', 'publisher']
 
 	res.render('index', { title: 'rconc016 - COP4710', tables: tables })
+})
+
+app.get('/display_table', function (req, res) 
+{
+	table = req.query.table
+
+	db_conn.query("SELECT * FROM " + table, function (err, result, fields)
+	{
+		if (err) throw err;
+
+		columns = []
+
+		fields.forEach(function(item) {
+			columns.push(item.name)
+		})		
+
+		res.render('display_table', { table: table, rows: result, columns: columns })
+	})
 })
 
 db_conn.connect(function(err) 
