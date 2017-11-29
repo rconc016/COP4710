@@ -5,4 +5,6 @@ append body
 		h1 Welcome to Ronald Concepcion's Final Project for COP4710
 		p Choose a table:
 		ul
-			il Table 1
+			each table in tables
+				li
+					a(href="/display_table?table=" + table)= table
