@@ -4,7 +4,7 @@ append body
 	.container
 		h1= "Displaying " + table + " table:"
 
-		button.btn(type="button") Add
+		button.btn(type="button", id="add_button") Add
 		button.btn(type="button") Remove
 		button.btn(type="button") Modify
 
@@ -24,4 +24,8 @@ append body
 
 						td
 							.radio
-								input(type="radio", name="optradio")
+								input(type="radio", name="radio_button")
+
+
+append scripts
+	script(src="../js/add_row.js")
