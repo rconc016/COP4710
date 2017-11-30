@@ -1,0 +1,21 @@
+extends ../node_modules/pug-bootstrap/_bootstrap
+
+append head
+	link(href='../public/css/display_table.css', rel='stylesheet')
+
+append body
+	.container
+		h1= "Displaying " + table + " table:"
+		form
+		table.table
+			thead
+				tr
+					each col in columns
+						th= col
+
+			tbody
+				tr
+					each col in columns
+						td
+							.form-group
+								input(type="text", id="row").form-control
