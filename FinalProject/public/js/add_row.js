@@ -1,8 +1,6 @@
 $(document).ready(function()
 {
-	console.log("script loaded");
-
-    $("#add_button").click(function(){
-        $(this).hide();
-    });
-});
+    $("#add_button").click(function() {
+    	window.location.href = $(this).prop('value')
+    })
+})

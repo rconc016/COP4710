@@ -50,7 +50,16 @@ app.get('/display_table', function (req, res)
 app.get('/add_row', function (req, res) 
 {
 	table = req.query.table
-	columns = req.query.columns
+	columns = []
+
+	index = 0
+	for (var param in req.query) 
+	{
+		if (index > 0)
+			columns.push(req.query[param])
+
+		index++
+	}
 
 	res.render('add_row', { title: 'Add New Row', table: table, columns: columns })
 })

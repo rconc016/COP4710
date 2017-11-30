@@ -1,11 +1,8 @@
 extends ../node_modules/pug-bootstrap/_bootstrap
 
-append head
-	link(href='../public/css/display_table.css', rel='stylesheet')
-
 append body
 	.container
-		h1= "Displaying " + table + " table:"
+		h1= "Add new row to " + table + " table:"
 		form
 		table.table
 			thead
@@ -19,3 +16,7 @@ append body
 						td
 							.form-group
 								input(type="text", id="row").form-control
+
+		.row
+			.text-center
+				button.btn Create

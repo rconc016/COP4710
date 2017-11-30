@@ -4,7 +4,10 @@ append body
 	.container
 		h1= "Displaying " + table + " table:"
 
-		button.btn(type="button", id="add_button") Add
+		- var url = "/add_row?table=" + table
+		- columns.forEach(function(item, index) {url += "&col" + (index+1) + "=" + item})
+
+		button.btn(type="button", id="add_button", value=url) Add
 		button.btn(type="button") Remove
 		button.btn(type="button") Modify
 
@@ -24,7 +27,7 @@ append body
 
 						td
 							.radio
-								input(type="radio", name="radio_button")
+								input(type="radio", name="radio_button", class="row_button")
 
 
 append scripts
