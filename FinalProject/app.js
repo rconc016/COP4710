@@ -3,6 +3,7 @@ var app = express()
 var mysql = require('mysql')
 
 app.set('view engine', 'pug')
+app.use(express.static(__dirname + '/public'))
 
 var db_conn = mysql.createConnection(
 {
@@ -44,6 +45,14 @@ app.get('/display_table', function (req, res)
 				res.render('display_table_text', { title: table, table: table, rows: result, columns: columns })
 		}
 	})
+})
+
+app.get('/add_row', function (req, res) 
+{
+	table = req.query.table
+	columns = req.query.columns
+
+	res.render('add_row', { title: 'Add New Row', table: table, columns: columns })
 })
 
 db_conn.connect(function(err) 
