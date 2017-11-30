@@ -3,14 +3,25 @@ extends ../node_modules/pug-bootstrap/_bootstrap
 append body
 	.container
 		h1= "Displaying " + table + " table:"
+
+		button.btn(type="button") Add
+		button.btn(type="button") Remove
+		button.btn(type="button") Modify
+
 		table.table
 			thead
 				tr
 					each col in columns
 						th= col
 
+					th Select
+
 			tbody
 				each row in rows
 					tr
 						each col in columns
 							td= row[col]
+
+						td
+							.radio
+								input(type="radio", name="optradio")
