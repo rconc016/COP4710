@@ -5,7 +5,6 @@ append body
 		h1= "Displaying " + table + " table:"
 
 		- var url = "/add_row?table=" + table
-		- columns.forEach(function(item, index) {url += "&col" + (index+1) + "=" + item})
 
 		button.btn(type="button", id="add_button", value=url) Add
 		button.btn(type="button") Remove

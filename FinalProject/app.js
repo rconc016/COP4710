@@ -4,6 +4,8 @@ var mysql = require('mysql')
 
 app.set('view engine', 'pug')
 app.use(express.static(__dirname + '/public'))
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
 
 var db_conn = mysql.createConnection(
 {
@@ -28,15 +30,16 @@ app.get('/display_table', function (req, res)
 	db_conn.query("SELECT * FROM " + table, function (err, result, fields)
 	{
 		if (err) 
-			res.render('error', { table: table, rows: result, columns: columns })
+			res.render('error', { title: table })
 
 		else
 		{
 			columns = []
+			rows = []
 
 			fields.forEach(function(item) {
 				columns.push(item.name)
-			})		
+			})	
 
 			if (!mode || mode == 0)
 				res.render('display_table', { title: table, table: table, rows: result, columns: columns })
@@ -52,16 +55,80 @@ app.get('/add_row', function (req, res)
 	table = req.query.table
 	columns = []
 
-	index = 0
-	for (var param in req.query) 
+	db_conn.query("SHOW COLUMNS FROM " + table, function (err, result)
 	{
-		if (index > 0)
-			columns.push(req.query[param])
+		if (err) 
+			res.render('error', { title: table })
 
-		index++
-	}
+		else
+		{
+			result.forEach(function(item) {
+				columns.push(item.Field)
+			})
 
-	res.render('add_row', { title: 'Add New Row', table: table, columns: columns })
+			res.render('add_row', { title: 'Add New Row', table: table, columns: columns })
+		}
+	})
+})
+
+app.post('/insert_row', function (req, res) 
+{
+	table = req.body.table
+	values = req.body.values
+
+	db_conn.query("SHOW COLUMNS FROM " + table, function (err, result)
+	{
+		if (err) 
+			res.render('error', { title: table })
+
+		else
+		{
+			columns = {}
+
+			result.forEach(function(item) 
+			{
+				col = {name: item.Field}
+
+				if (item.Type.includes('int') || item.Type.includes('decimal'))
+					col.type = 'number'
+
+				else
+					col.type = 'string'
+
+				columns[col.name] = col.type
+			})
+
+			query = "INSERT INTO " + req.body.table + "("
+
+			for (var key in values) 
+				query += key + ","
+
+			query = query.substring(0, query.length - 1)
+			query += ") VALUES("
+
+			for (var key in values) 
+			{
+				if (columns[key] == 'number') {
+					query += values[key] + ","
+				}
+
+				else
+					query += "'" + values[key] + "',"
+			}
+
+			query = query.substring(0, query.length - 1)
+			query += ")"
+			
+			db_conn.query(query, function (err, result)
+			{
+				if (err) 
+					res.status(400).send({ message: err })
+
+				else
+					res.status(200).send({ message: "Record was inserted" })
+			})
+		}
+	})
 })
 
 db_conn.connect(function(err) 

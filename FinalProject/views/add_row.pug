@@ -4,7 +4,7 @@ append body
 	.container
 		h1= "Add new row to " + table + " table:"
 		form
-		table.table
+		table.table#table
 			thead
 				tr
 					each col in columns
@@ -13,10 +13,38 @@ append body
 			tbody
 				tr
 					each col in columns
+						- var col_id = col
+
 						td
 							.form-group
-								input(type="text", id="row").form-control
+								input(type="text", id=col_id).form-control
+
+							- col_id++
 
 		.row
 			.text-center
-				button.btn Create
+				button.btn#create_button Create
+
+append scripts
+	script.
+		$(document).ready(function()
+		{
+		    $("#create_button").click(function() 
+		    {
+		    	params = {table: !{JSON.stringify(table)}}
+		    	columns = !{JSON.stringify(columns)}
+		    	values = {}
+
+		    	for (var index in columns)
+		    		values[columns[index]] = $('#' + columns[index]).val()
+
+		    	params.values = values
+
+		    	$.post( "/insert_row", params, function(data) {
+					window.location.href = '/display_table?table=' + params.table
+				})
+				.fail(function(err, status) {
+				   
+				})
+		    })
+		})
