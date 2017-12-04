@@ -6,8 +6,8 @@ append body
 
 		- var url = "/add_row?table=" + table
 
-		button.btn(type="button", id="add_button", value=url) Add
-		button.btn(type="button") Remove
+		button.btn(type="button", id="insert_button") Add
+		button.btn(type="button", id="delete_button") Remove
 		button.btn(type="button") Modify
 
 		table.table
@@ -19,6 +19,8 @@ append body
 					th Select
 
 			tbody
+				- index = 0
+
 				each row in rows
 					tr
 						each col in columns
@@ -26,8 +28,38 @@ append body
 
 						td
 							.radio
-								input(type="radio", name="radio_button", class="row_button")
+								input(type="radio", name="radio_button", value=index++)
 
 
 append scripts
 	script(src="../js/add_row.js")
+
+	script.
+		table = !{JSON.stringify(table)}
+		rows = !{JSON.stringify(rows)}
+		columns = !{JSON.stringify(columns)}
+
+		selected_row = -1
+
+		$(document).ready(function()
+		{
+			$("#insert_button").click(function() {
+				window.location.href = '/add_row?table=' + table
+			})
+
+			$("#delete_button").click(function() 
+			{
+				if (selected_row > -1)
+				{
+					params = {table: table, values: rows[selected_row]}
+					
+					$.post( "/delete_row", params, function(data) {
+						location.reload()
+					})
+				}
+			})
+
+			$(".radio").click(function() {
+				selected_row = $(this).find('input').prop('value')
+		    })
+		})

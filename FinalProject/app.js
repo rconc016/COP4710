@@ -131,6 +131,54 @@ app.post('/insert_row', function (req, res)
 	})
 })
 
+app.post('/delete_row', function (req, res) 
+{
+	table = req.body.table
+	values = req.body.values
+
+	db_conn.query("SHOW COLUMNS FROM " + table, function (err, result)
+	{
+		columns = {}
+
+		result.forEach(function(item) 
+		{
+			col = {name: item.Field}
+
+			if (item.Type.includes('int') || item.Type.includes('decimal'))
+				col.type = 'number'
+
+			else
+				col.type = 'string'
+
+			columns[col.name] = col.type
+		})
+
+		query = "DELETE FROM " + table + " WHERE "
+
+		for (attribute in values)
+		{
+			if (columns[attribute] == 'number')
+				query += attribute + "=" + values[attribute] + " AND "
+
+			else
+				query += attribute + "='" + values[attribute] + "' AND "
+		}
+
+		query = query.substring(0, query.length - 5)
+
+		console.log(query)
+
+		/db_conn.query(query, function (err, result)
+		{
+			if (err) 
+				res.status(400).send({ message: err })
+
+			else
+				res.status(200).send({ message: "Record was deleted" })
+		})
+	})
+})
+
 db_conn.connect(function(err) 
 {
 	if (err) throw err
