@@ -1,0 +1,52 @@
+extends ../node_modules/pug-bootstrap/_bootstrap
+
+append body
+	.container
+		h1= "Modify row in " + table + " table:"
+		form
+		table.table#table
+			thead
+				tr
+					each col in columns
+						th= col
+
+			tbody
+				tr
+					each col in columns
+						- var col_id = col
+
+						td
+							.form-group
+								input(type="text", id=col_id).form-control
+
+							- col_id++
+
+		.row
+			.text-center
+				button.btn#create_button Create
+
+append scripts
+	script.
+		$(document).ready(function()
+		{
+		    $("#create_button").click(function() 
+		    {
+		    	params = {table: !{JSON.stringify(table)}}
+		    	columns = !{JSON.stringify(columns)}
+		    	old_values = !{JSON.stringify(values)}
+		    	new_values = {}
+
+		    	for (var index in columns)
+		    		new_values[columns[index]] = $('#' + columns[index]).val()
+
+		    	params.old_values = old_values
+		    	params.new_values = new_values
+
+		    	$.post( "/update_row", params, function(data) {
+					window.location.href = '/display_table?table=' + params.table
+				})
+				.fail(function(err, status) {
+				   
+				})
+		    })
+		})

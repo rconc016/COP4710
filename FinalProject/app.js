@@ -166,8 +166,6 @@ app.post('/delete_row', function (req, res)
 
 		query = query.substring(0, query.length - 5)
 
-		console.log(query)
-
 		/db_conn.query(query, function (err, result)
 		{
 			if (err) 
@@ -175,6 +173,88 @@ app.post('/delete_row', function (req, res)
 
 			else
 				res.status(200).send({ message: "Record was deleted" })
+		})
+	})
+})
+
+app.get('/modify_row', function (req, res) 
+{
+	table = req.query.table
+	columns = []
+	values = {}
+
+	db_conn.query("SHOW COLUMNS FROM " + table, function (err, result)
+	{
+		if (err) 
+			res.render('error', { title: table })
+
+		else
+		{
+			result.forEach(function(item) {
+				columns.push(item.Field)
+				values[item.Field] = req.query[item.Field]
+			})
+
+			res.render('modify_row', { title: 'Modify Row', table: table, columns: columns, values: values })
+		}
+	})
+})
+
+app.post('/update_row', function (req, res) 
+{
+	table = req.body.table
+	old_values = req.body.old_values
+	new_values = req.body.new_values
+
+	db_conn.query("SHOW COLUMNS FROM " + table, function (err, result)
+	{
+		columns = {}
+
+		result.forEach(function(item) 
+		{
+			col = {name: item.Field}
+
+			if (item.Type.includes('int') || item.Type.includes('decimal'))
+				col.type = 'number'
+
+			else
+				col.type = 'string'
+
+			columns[col.name] = col.type
+		})
+
+		query = "UPDATE " + table + " SET "
+
+		for (attribute in old_values)
+		{
+			if (columns[attribute] == 'number')
+				query += attribute + "=" + new_values[attribute] + ","
+
+			else
+				query += attribute + "='" + new_values[attribute] + "',"
+		}
+
+		query = query.substring(0, query.length - 1)
+		query += " WHERE "
+
+		for (attribute in old_values)
+		{
+			if (columns[attribute] == 'number')
+				query += attribute + "=" + old_values[attribute] + " AND "
+
+			else
+				query += attribute + "='" + old_values[attribute] + "' AND "
+		}
+
+		query = query.substring(0, query.length - 5)
+
+		db_conn.query(query, function (err, result)
+		{
+			if (err) 
+				res.status(400).send({ message: err })
+
+			else
+				res.status(200).send({ message: "Record was updated" })
 		})
 	})
 })

@@ -8,7 +8,7 @@ append body
 
 		button.btn(type="button", id="insert_button") Add
 		button.btn(type="button", id="delete_button") Remove
-		button.btn(type="button") Modify
+		button.btn(type="button" id="update_button") Modify
 
 		table.table
 			thead
@@ -56,6 +56,22 @@ append scripts
 					$.post( "/delete_row", params, function(data) {
 						location.reload()
 					})
+				}
+			})
+
+			$("#update_button").click(function() 
+			{
+				if (selected_row > -1)
+				{
+					params = {table: table}
+
+					for (val in rows[selected_row])
+					{
+						row = rows[selected_row]
+						params[val] = row[val]
+					}
+
+					window.location.href = '/modify_row?' + $.param(params)
 				}
 			})
 
