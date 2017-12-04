@@ -166,7 +166,7 @@ app.post('/delete_row', function (req, res)
 
 		query = query.substring(0, query.length - 5)
 
-		/db_conn.query(query, function (err, result)
+		db_conn.query(query, function (err, result)
 		{
 			if (err) 
 				res.status(400).send({ message: err })
