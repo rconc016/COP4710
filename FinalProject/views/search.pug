@@ -1,0 +1,25 @@
+extends nav
+
+append body
+	.container
+		if rows.length > 0
+			.row
+				h1= "Displaying inventory for '" + title + "':"
+
+			table.table
+				thead
+					tr
+						each col in columns
+							th= col
+
+				tbody
+					- index = 0
+
+					each row in rows
+						tr
+							each col in columns
+								td= row[col]
+
+		else
+			.row
+				h1= "Could not find any results for '" + title + "'"

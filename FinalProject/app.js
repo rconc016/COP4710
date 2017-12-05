@@ -259,6 +259,32 @@ app.post('/update_row', function (req, res)
 	})
 })
 
+app.get('/search', function (req, res) 
+{
+	title = req.query.title
+
+	query = "SELECT title, branchName, OnHand, authorLast, authorFirst, publisherName "
+	query += "FROM ((((book NATURAL JOIN inventory) NATURAL JOIN branch) NATURAL JOIN wrote) NATURAL JOIN author) NATURAL JOIN publisher "
+	query += "WHERE title=" + "'" + req.query.title + "'"
+
+	db_conn.query(query, function (err, result, fields)
+	{
+		if (err) 
+			res.render('error', { title: 'Error' })
+
+		else
+		{
+			columns = []
+
+			fields.forEach(function(item) {
+				columns.push(item.name)
+			})	
+
+			res.render('search', { title: title, columns: columns, rows: result })
+		}
+	})
+})
+
 db_conn.connect(function(err) 
 {
 	if (err) throw err

@@ -1,10 +1,27 @@
-extends ../node_modules/pug-bootstrap/_bootstrap
+extends nav
 
 append body
 	.container
 		h1 Welcome to Ronald Concepcion's Final Project for COP4710
+
+		h2 View Tables
 		p Choose a table:
 		ul
 			each table in tables
 				li
 					a(href="/display_table?table=" + table)= table
+
+		h2 Search Books
+		.form-group
+			.col-xs-3
+				input(type="text", id="search_text").form-control
+			button.btn(id="search_button") Search
+
+append scripts
+	script.
+		$(document).ready(function()
+		{
+			$("#search_button").click(function() {
+				window.location.href = '/search?title=' + $("#search_text").val()
+			})
+		})
